@@ -1,0 +1,227 @@
+
+<html>
+<head>
+   
+    <title>TLModel UI</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            background-color: #f0f0f0;
+            height: 100vh;
+            position: relative;
+        }
+        .sidebar {
+            width: 250px 500px;
+            height: min-content;
+            background: #e3f2fd;
+            padding: 10px;
+            height: 50vh;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            transition: width 0.3s;
+            overflow: hidden;
+            
+        }
+        .sidebar.minimized {
+            display: none;
+        }
+        .sidebar h2 {
+            background: #d97d42;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin: 0;
+            font-size: 18px;
+            transition: opacity 0.3s;
+           
+        }
+        .sidebar.minimized h2 {
+            opacity: 0;
+        }
+        .menu {
+            list-style: none;
+            padding: 0;
+        }
+        .menu li {
+            padding: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+        .menu li i {
+            margin-right: 10px;
+            color: #1e3a8a;
+            
+        }
+        .sidebar.minimized .menu li span {
+            display: none;
+        }
+        .submenu {
+            padding-left: 30px;
+            display: none;
+        }
+        .submenu.active {
+            padding: 8px 16px;
+            margin-top: 5px;
+            display: inline-block;
+        }
+        .submenu-item {
+            background: #90caf9;
+            padding: 5px;
+            margin: 5px 10px 0;
+            border-radius: 5px;
+            display: inline-block;
+        }
+        .toggle-btn {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        .sidebar.minimized + .toggle-btn {
+            left: 20px;
+        }
+        .sidebar.minimized .add-dialog {
+            display: none;
+        }
+        .add-dialog {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: #ffffff;
+            padding: 6px;
+            border-radius: 6px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            width: 170px;
+            font-size: 12px;
+        }
+        .add-dialog h3 {
+            margin: 0;
+            font-size: 12px;
+            background: #d32f2f;
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .add-dialog select, .add-dialog button {
+            width: 100%;
+            margin: 3px 0;
+            padding: 3px;
+            font-size: 12px;
+        }
+        
+        .remove-dialog {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: #ffffff;
+            padding: 6px;
+            border-radius: 6px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            width: 160px;
+            font-size: 12px;
+        }
+        .remove-dialog h3 {
+            margin: 0;
+            font-size: 12px;
+            background: #d32f2f;
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .remove-dialog select, .remove-dialog button {
+            width: 100%;
+            margin: 3px 0;
+            padding: 3px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar" id="sidebar">
+    <h2>TLModel</h2>
+    <ul class="menu">
+        <li><i class="fas fa-home"></i> <span>Home</span></li>
+        <li onclick="toggleSubmenu('notebook')">
+            <i class="fas fa-book"></i> <span>Notebook</span>
+            <div id="notebook" class="submenu active">
+                <!-- No default items -->
+            </div>
+        </li>
+        <li><i class="fas fa-book-open"></i> <span>Book</span></li>
+        <li><i class="fas fa-video"></i> <span>OnlineMeet</span></li>
+        <li><i class="fas fa-tasks"></i> <span>Assignment</span></li>
+        <li><i class="fas fa-edit"></i> <span>Class Test</span></li>
+        <li><i class="fas fa-project-diagram"></i> <span>Project</span></li>
+    </ul>
+   
+</div>
+<div class="add-dialog">
+    <h3>Add Submenu Item</h3>
+    <input type="text" id="newItem" placeholder="Enter item name">
+    <div style="display: flex; align-items: c; gap: 5px;">
+        <select id="parentMenu">
+            <option value="notebook">Notebook</option>
+        </select>
+        <button onclick="addSubmenuItem()">Add</button>
+    </div>
+</div>
+
+<div class="toggle-btn" onclick="toggleSidebar()">☰</div>
+
+<div class="remove-dialog">
+    <h3>Remove Item</h3>
+    <select id="removeItem">
+        <!-- No default items -->
+    </select>
+    <button onclick="removeSubmenuItem()">Remove</button>
+</div>
+
+<script>
+    function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("minimized");
+    }
+    function toggleSubmenu(id) {
+        document.getElementById(id).classList.toggle('active');
+    }
+    function addSubmenuItem() {
+        let newItem = document.getElementById("newItem").value;
+        if (newItem.trim() === "") return;
+        let submenu = document.getElementById("notebook");
+        let div = document.createElement("div");
+        div.className = "submenu-item";
+        div.innerText = newItem;
+        submenu.appendChild(div);
+        let removeDropdown = document.getElementById("removeItem");
+        let option = document.createElement("option");
+        option.value = newItem;
+        option.text = newItem;
+        removeDropdown.add(option);
+        document.getElementById("newItem").value = "";
+    }
+    function removeSubmenuItem() {
+        let itemToRemove = document.getElementById("removeItem").value;
+        let submenu = document.getElementById("notebook");
+        let items = submenu.getElementsByClassName("submenu-item");
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].innerText === itemToRemove) {
+                submenu.removeChild(items[i]);
+                break;
+            }
+        }
+        let removeDropdown = document.getElementById("removeItem");
+        removeDropdown.remove(removeDropdown.selectedIndex);
+    }
+</script>
+
+</body>
+</html>
